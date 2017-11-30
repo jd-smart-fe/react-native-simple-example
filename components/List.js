@@ -3,16 +3,6 @@ import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import { ScrollView, ActivityIndicator } from "react-native";
 import { List, ListItem, Avatar } from 'react-native-elements';
 
-// demo data
-let dataset = {
-  count: 10,
-  results: [
-    { name: 'Demo 1' },
-    { name: 'Demo 2' },
-    { name: 'Demo 3' },
-  ]
-}
-
 export default class Iscroll extends React.Component {
 
   constructor(props) {
@@ -24,13 +14,22 @@ export default class Iscroll extends React.Component {
     };
   }
 
-  fetchData() {
+  async fetchData() {
 
-    let json = dataset;
-    this.setState({
-      count: json.count,
-      list: json.results,
-    });
+    try {
+      let response = await fetch('https://swapi.co/api/people/');
+      let json = await response.json();
+      this.setState({
+        count: json.count,
+        list: json.results,
+      });
+    } catch (e) {
+      console.log(e);
+      this.setState({
+        list: json.results,
+        count: -1
+      });
+    }
   }
 
   _onPressButton(item) {
@@ -45,6 +44,7 @@ export default class Iscroll extends React.Component {
 
     return (
       <View>
+
         {
           this.state.list.length > 0 ? (<List>
             {
